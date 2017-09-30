@@ -1,0 +1,97 @@
+{extend name="public/base" /}
+
+{block name="body"}
+<!-- 标题栏 -->
+<div class="main-title">
+    <h2>
+        {$info['id']?'编辑':'新增'}报修
+        {notempty name="pid">
+        [&nbsp;父导航：<a href="{:url('index','pid='.$pid)}">{$parent.title}</a>&nbsp;]
+        {/notempty}
+    </h2>
+</div>
+<div class="cf">
+    <div class="fl">
+        <a class="btn" href="{:url('add')}">新 增</a>
+
+    </div>
+
+    <!-- 高级搜索 -->
+    <div class="search-form fr cf">
+        <div class="sleft">
+            <input type="text" name="nickname" class="search-input" value="{:input('nickname')}" placeholder="请输入用户昵称或者ID">
+            <a class="sch-btn" href="javascript:;" id="search" url="{:url('index')}"><i class="btn-search"></i></a>
+        </div>
+    </div>
+</div>
+<!-- 数据列表 -->
+<div class="data-table table-striped">
+    <table class="">
+        <thead>
+        <tr>
+            <th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
+            <th class="">保修单号</th>
+            <th class="">报修人</th>
+            <th class="">电话</th>
+            <th class="">地址</th>
+            <th class="">问题</th>
+            <th class="">保修时间</th>
+            <th class="">状态</th>
+            <th class="">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {notempty name="list"}
+        {volist name="list" id="vo"}
+        <tr>
+            <td><input class="ids" type="checkbox" name="id[]" value="{$vo.uid}" /></td>
+            <td>{$vo.id} </td>
+            <td>{$vo.name}</td>
+            <td>{$vo.tel}</td>
+            <td>{$vo.address}</td>
+            <td>{$vo.title}</td>
+            <td><span>{$vo.create_time|date='Y-m-d H:i:s',###}</span></td>
+            <td>{$vo.stutas}</td>
+            <td>{eq name="vo.status" value="1"}
+                {else/}
+                <a  href="{:url('edit?id='.$vo['id'])}">编辑</a>
+                {/eq}
+                <a href="{:url('del?id='.$vo['id'])}" title="删除" class="confirm ajax-get">删除</a>
+
+            </td>
+        </tr>
+        {/volist}
+        {else/}
+        <td colspan="9" class="text-center"> aOh! 暂时还没有内容! </td>
+        {/notempty}
+        </tbody>
+    </table>
+</div>
+<div class="page">
+    {$_page}
+</div>
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+    $(function() {
+        //点击排序
+        $('.list_sort').click(function(){
+            var url = $(this).attr('url');
+            var ids = $('.ids:checked');
+            var param = '';
+            if(ids.length > 0){
+                var str = new Array();
+                ids.each(function(){
+                    str.push($(this).val());
+                });
+                param = str.join(',');
+            }
+
+            if(url != undefined && url != ''){
+                window.location.href = url + '/ids/' + param;
+            }
+        });
+    });
+</script>
+{/block}
